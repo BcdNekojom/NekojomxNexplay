@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nekojom ✕ NexPlay — เติม Robux ราคาถูก ไวใน 5 นาที</title>
+<style>
+  :root{
+    --bg:#12071f;
+    --bg2:#1b0b2e;
+    --pink:#ff5fd2;
+    --purple:#7c5cff;
+    --gold:#ffd166;
+    --green:#4ade80;
+    --card:rgba(255,255,255,.06);
+    --stroke:rgba(255,255,255,.14);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Leelawadee UI','Thonburi','Segoe UI',system-ui,sans-serif;
+    background:var(--bg);
+    color:#fff;
+    overflow-x:hidden;
+    line-height:1.6;
+  }
+  ::selection{background:var(--pink);color:#fff}
+
+  /* ---------- particles canvas ---------- */
+  #fx{position:fixed;inset:0;pointer-events:none;z-index:5}
+
+  /* ---------- navbar ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 26px;
+    background:rgba(18,7,31,.72);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--stroke);
+  }
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;letter-spacing:.5px}
+  .logo .cat{font-size:1.5rem;filter:drop-shadow(0 0 8px var(--pink))}
+  .logo b{color:var(--pink)}
+  .navlinks{display:flex;gap:22px;font-size:.95rem}
+  .navlinks a{color:#e9d9ff;text-decoration:none;transition:.25s;position:relative}
+  .navlinks a:hover{color:var(--pink)}
+  .navlinks a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:2px;background:var(--pink);transition:.25s;border-radius:2px}
+  .navlinks a:hover::after{width:100%}
+  @media(max-width:640px){.navlinks{display:none}}
+
+  /* ---------- music player ---------- */
+  #player{
+    position:fixed;right:14px;bottom:14px;z-index:200;
+    font-size:.92rem;
+  }
+  #pMain{
+    display:flex;align-items:center;gap:10px;
+    background:rgba(24,10,42,.9);
+    border:1px solid var(--stroke);
+    backdrop-filter:blur(16px);
+    border-radius:999px;padding:8px 12px 8px 8px;
+    box-shadow:0 10px 34px rgba(0,0,0,.45);
+    max-width:calc(100vw - 28px);
+  }
+  #pCover{
+    width:46px;height:46px;border-radius:50%;object-fit:cover;flex:0 0 auto;
+    border:2px solid var(--pink);box-shadow:0 0 14px rgba(255,95,210,.5);
+    animation:spin 14s linear infinite;animation-play-state:paused;
+  }
+  #player.playing #pCover{animation-play-state:running}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .pInfo{min-width:0;display:flex;flex-direction:column;gap:3px}
+  #pTitle{
+    font-weight:800;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    max-width:150px;color:#ffe9fb;
+  }
+  .pTime{display:flex;align-items:center;gap:7px;font-size:.68rem;color:#c9b6e6;font-variant-numeric:tabular-nums}
+  #pBar{
+    width:110px;height:6px;border-radius:99px;background:rgba(255,255,255,.14);
+    cursor:pointer;position:relative;overflow:hidden;flex:0 0 auto;
+  }
+  #pFill{height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,var(--pink),var(--purple));transition:width .2s linear}
+  .pCtrl{display:flex;align-items:center;gap:4px;flex:0 0 auto}
+  .pCtrl button{
+    background:rgba(255,255,255,.08);border:1px solid var(--stroke);color:#fff;
+    width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:.85rem;
+    display:flex;align-items:center;justify-content:center;transition:.2s;font-family:inherit;
+  }
+  .pCtrl button:hover{background:rgba(255,95,210,.3);transform:scale(1.1)}
+  #pPlay{background:linear-gradient(135deg,var(--pink),var(--purple))!important;border:none!important;width:40px!important;height:40px!important;font-size:1rem!important}
+  #pPanel{
+    position:absolute;bottom:calc(100% + 10px);right:0;width:288px;max-height:300px;overflow:auto;
+    background-image:linear-gradient(rgba(22,9,40,.88),rgba(22,9,40,.94)),url('__PANELBG__');
+    background-size:cover;background-position:center;
+    border:1px solid var(--stroke);border-radius:20px;
+    backdrop-filter:blur(16px);box-shadow:0 14px 44px rgba(0,0,0,.5);
+    padding:10px;display:none;
+  }
+  #pPanel.open{display:block}
+  #pPanel h4{font-size:.8rem;color:#e9d9ff;padding:4px 8px 8px;letter-spacing:1px;text-shadow:0 2px 8px rgba(0,0,0,.8)}
+  .pRow{
+    display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:14px;cursor:pointer;
+    transition:.2s;border:1px solid transparent;
+  }
+  .pRow:hover{background:rgba(255,255,255,.07)}
+  .pRow.cur{background:rgba(255,95,210,.14);border-color:rgba(255,95,210,.4)}
+  .pRow img{width:38px;height:38px;border-radius:10px;object-fit:cover;flex:0 0 auto}
+  .pRow .t{flex:1;min-width:0}
+  .pRow .t b{display:block;font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pRow .t span{font-size:.66rem;color:#a893c9}
+  .pRow .d{font-size:.68rem;color:#c9b6e6;font-variant-numeric:tabular-nums}
+  @media(max-width:560px){
+    #pTitle{max-width:82px;font-size:.78rem}
+    #pBar{width:64px}
+  }
+
+  /* ที่ซ่อนเครื่องเล่น YouTube (เสียงเพลงจะเล่นจากตรงนี้ แต่มองไม่เห็น) */
+  #ytHost{position:fixed;right:16px;bottom:84px;width:240px;height:140px;opacity:0;pointer-events:none;z-index:150}
+  #ytHost iframe{width:100%;height:100%}
+
+  /* ---------- admin ---------- */
+  .admin-card{
+    max-width:760px;margin:0 auto;
+    display:flex;align-items:center;gap:30px;
+    background:var(--card);border:1px solid var(--stroke);border-radius:28px;
+    padding:34px 36px;backdrop-filter:blur(10px);
+    box-shadow:0 18px 54px rgba(124,92,255,.18);
+  }
+  .admin-photo{
+    flex:0 0 auto;width:172px;height:172px;border-radius:50%;padding:5px;
+    background:conic-gradient(var(--pink),var(--purple),var(--gold),var(--pink));
+    animation:ring 6s linear infinite;
+  }
+  @keyframes ring{to{transform:rotate(360deg)}}
+  .admin-photo img{
+    width:100%;height:100%;border-radius:50%;object-fit:cover;border:4px solid #1b0b2e;
+    transform:rotate(-0deg);
+  }
+  .admin-info h3{font-size:1.35rem;font-weight:900}
+  .admin-info .role{color:#c9b6e6;font-size:.9rem;margin-top:2px}
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:7px 14px;border-radius:999px;font-size:.82rem;font-weight:800;
+    border:1px solid var(--stroke);background:rgba(255,255,255,.07);
+  }
+  .chip-open{background:rgba(74,222,128,.15);border-color:rgba(74,222,128,.5);color:#b8ffd1}
+  .chip-closed{background:rgba(255,77,109,.15);border-color:rgba(255,77,109,.5);color:#ffc2ce}
+  .admin-note{margin-top:12px;font-size:.88rem;color:#e3d5f7}
+  .admin-cta{margin-top:18px}
+  @media(max-width:680px){
+    .admin-card{flex-direction:column;text-align:center;padding:30px 22px;gap:20px}
+    .chips{justify-content:center}
+  }
+
+  /* ---------- hero ---------- */
+  header{
+    position:relative;min-height:100svh;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    padding:110px 20px 80px;
+    background-image:linear-gradient(rgba(18,7,31,.55),rgba(18,7,31,.82) 70%,var(--bg)),url('__BG__');
+    background-size:cover;background-position:center;
+  }
+  .hero-in{max-width:860px;animation:fadeUp 1s ease both}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+  .tag{
+    display:inline-block;padding:7px 18px;border-radius:999px;
+    background:rgba(255,95,210,.16);border:1px solid rgba(255,95,210,.5);
+    color:#ffb8ec;font-size:.9rem;font-weight:700;letter-spacing:1px;margin-bottom:18px;
+  }
+  h1{
+    font-size:clamp(2.4rem,7vw,4.4rem);font-weight:900;line-height:1.15;
+    background:linear-gradient(90deg,#fff 0%,var(--pink) 45%,var(--purple) 80%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 4px 24px rgba(255,95,210,.35));
+  }
+  .hero-in p.sub{font-size:clamp(1rem,2.6vw,1.3rem);color:#f2e6ff;margin-top:16px}
+  .badges{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+  .badge{
+    display:flex;align-items:center;gap:8px;
+    background:var(--card);border:1px solid var(--stroke);
+    padding:9px 16px;border-radius:14px;font-size:.92rem;font-weight:600;color:#ffe9fb;
+    backdrop-filter:blur(8px);
+  }
+  .cta{margin-top:34px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:14px 30px;border-radius:999px;font-weight:800;font-size:1.02rem;
+    text-decoration:none;cursor:pointer;border:none;font-family:inherit;
+    transition:transform .2s, box-shadow .2s;
+  }
+  .btn:hover{transform:translateY(-3px)}
+  .btn-main{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;box-shadow:0 10px 32px rgba(255,95,210,.4)}
+  .btn-ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid var(--stroke);backdrop-filter:blur(8px)}
+
+  /* ---------- sections ---------- */
+  section{padding:84px 20px;max-width:1180px;margin:0 auto}
+  .sec-head{text-align:center;margin-bottom:44px}
+  .sec-head .kicker{color:var(--pink);font-weight:800;letter-spacing:3px;font-size:.85rem;text-transform:uppercase}
+  .sec-head h2{font-size:clamp(1.7rem,4.5vw,2.5rem);font-weight:900;margin-top:6px}
+  .sec-head p{color:#c9b6e6;margin-top:8px}
+
+  /* ---------- packs ---------- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:22px}
+  .pack{
+    position:relative;border-radius:22px;overflow:hidden;
+    background:var(--card);border:1px solid var(--stroke);
+    transition:transform .3s, box-shadow .3s;
+    animation:fadeUp .8s ease both;
+  }
+  .pack:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 18px 48px rgba(255,95,210,.28)}
+  .pack .art{position:relative;height:150px;overflow:hidden}
+  .pack .art img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+  .pack:hover .art img{transform:scale(1.12)}
+  .pack .hot{
+    position:absolute;top:10px;left:10px;
+    background:linear-gradient(135deg,#ff4d6d,#ff8a3d);color:#fff;
+    font-size:.72rem;font-weight:800;padding:4px 10px;border-radius:999px;letter-spacing:.5px;
+    box-shadow:0 4px 14px rgba(255,77,109,.5);
+  }
+  .pack .best{
+    position:absolute;top:10px;right:10px;
+    background:linear-gradient(135deg,var(--gold),#ffb347);color:#4a2c00;
+    font-size:.72rem;font-weight:900;padding:4px 10px;border-radius:999px;
+    box-shadow:0 4px 14px rgba(255,209,102,.5);
+  }
+  .pack .body{padding:16px 16px 18px;text-align:center}
+  .rbx{display:flex;align-items:center;justify-content:center;gap:8px;font-size:1.45rem;font-weight:900;color:#fff}
+  .rbx svg{flex:0 0 auto}
+  .price{margin-top:4px;font-size:1.12rem;font-weight:800;color:var(--gold)}
+  .per{font-size:.75rem;color:#a893c9;margin-top:2px}
+  .order{
+    margin-top:12px;display:inline-flex;align-items:center;gap:7px;
+    background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;
+    text-decoration:none;font-weight:800;font-size:.9rem;
+    padding:9px 22px;border-radius:999px;transition:.25s;
+    box-shadow:0 6px 20px rgba(124,92,255,.35);
+  }
+  .order:hover{filter:brightness(1.15);transform:translateY(-2px)}
+
+  /* ---------- click bounce ---------- */
+  a.pack{display:block;text-decoration:none;color:inherit}
+  .pack:active,.map:active,.contact:active{transform:scale(.94)}
+  .btn:active{transform:translateY(0) scale(.95)}
+  .pop{animation:pop .38s cubic-bezier(.34,1.56,.64,1) !important}
+  @keyframes pop{
+    0%{transform:scale(.9)}
+    55%{transform:scale(1.07)}
+    100%{transform:scale(1)}
+  }
+
+  /* ---------- steps ---------- */
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+  .step{
+    background:var(--card);border:1px solid var(--stroke);border-radius:20px;
+    padding:26px 20px;text-align:center;backdrop-filter:blur(8px);
+    transition:.3s;
+  }
+  .step:hover{transform:translateY(-6px);border-color:var(--pink)}
+  .step .num{
+    width:52px;height:52px;margin:0 auto 14px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    box-shadow:0 8px 22px rgba(255,95,210,.4);
+  }
+  .step h3{font-size:1.05rem;margin-bottom:6px}
+  .step p{font-size:.88rem;color:#c9b6e6}
+
+  /* ---------- contact ---------- */
+  .contacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px}
+  .contact{
+    display:flex;align-items:center;gap:16px;
+    background:var(--card);border:1px solid var(--stroke);border-radius:20px;
+    padding:20px 18px;text-decoration:none;color:#fff;
+    transition:.3s;backdrop-filter:blur(8px);
+  }
+  .contact:hover{transform:translateY(-6px) scale(1.02);border-color:var(--pink);box-shadow:0 14px 38px rgba(255,95,210,.25)}
+  .contact .ic{
+    width:52px;height:52px;border-radius:16px;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .contact b{display:block;font-size:1.02rem}
+  .contact span{font-size:.82rem;color:#c9b6e6}
+  .ic-line{background:linear-gradient(135deg,#06c755,#04a944)}
+  .ic-fb{background:linear-gradient(135deg,#1877f2,#0b5fd0)}
+  .ic-dc{background:linear-gradient(135deg,#5865f2,#404eed)}
+  .ic-ig{background:linear-gradient(135deg,#f9ce34,#ee2a7b 50%,#6228d7)}
+
+  /* ---------- maps ---------- */
+  .maps{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px}
+  .map{
+    border-radius:22px;overflow:hidden;background:var(--card);
+    border:1px solid var(--stroke);text-decoration:none;color:#fff;display:block;
+    transition:.3s;
+  }
+  .map:hover{transform:translateY(-8px);box-shadow:0 16px 44px rgba(124,92,255,.3);border-color:var(--purple)}
+  .map .art{height:180px;overflow:hidden;position:relative}
+  .map .art img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+  .map:hover .art img{transform:scale(1.1)}
+  .map .label{
+    position:absolute;bottom:0;left:0;right:0;padding:26px 16px 12px;
+    background:linear-gradient(transparent,rgba(10,3,20,.9));
+    font-weight:900;font-size:1.1rem;text-shadow:0 2px 10px rgba(0,0,0,.6);
+  }
+  .map .body{display:flex;align-items:center;justify-content:space-between;padding:14px 16px}
+  .map .body span{font-size:.85rem;color:#c9b6e6}
+  .map .go{color:var(--pink);font-weight:800;font-size:.88rem}
+
+  /* ---------- notice ---------- */
+  .notice{
+    max-width:900px;margin:0 auto;background:rgba(255,209,102,.08);
+    border:1px solid rgba(255,209,102,.35);border-radius:20px;padding:26px 28px;
+  }
+  .notice h3{color:var(--gold);margin-bottom:10px;font-size:1.1rem}
+  .notice li{margin:6px 0 6px 20px;font-size:.92rem;color:#f0e4c8}
+
+  footer{
+    text-align:center;padding:44px 20px;color:#9a86bd;font-size:.88rem;
+    border-top:1px solid var(--stroke);margin-top:40px;
+  }
+  footer b{color:var(--pink)}
+</style>
+</head>
+<body>
+
+<canvas id="fx"></canvas>
+
+<nav>
+  <div class="logo"><span class="cat">🐱</span> Nekojom<b>X</b>NexPlay</div>
+  <div class="navlinks">
+    <a href="#packs">แพ็คราคา</a>
+    <a href="#howto">วิธีเติม</a>
+    <a href="#admin">แอดมินร้าน</a>
+    <a href="#contact">ช่องทางติดต่อ</a>
+    <a href="#maps">แผนที่ / เกม</a>
+  </div>
+</nav>
+
+<header>
+  <div class="hero-in">
+    <div class="tag">🐱 NEKOJOM ✕ NEXPLAY GAME STORE</div>
+    <h1>เติม ROBUX<br>ราคาถูก ไวไม่เกิน 5 นาที</h1>
+    <p class="sub">Roblox ใช้ <b style="color:var(--gold)">ID - PASS</b> ในการเติม &nbsp;•&nbsp; ฝากข้อมูลผ่านช่องทางแชท ปลอดภัย ตรงไปตรงมา</p>
+    <div class="badges">
+      <div class="badge">⚡ เติมเร็วมาก &lt; 5 นาที</div>
+      <div class="badge">💸 ราคาถูกที่สุด</div>
+      <div class="badge">🔒 เติมตรง ไม่มีหลอก</div>
+      <div class="badge">🎮 SPECIAL PACK พิเศษ</div>
+      <div class="badge">🕐 เปิด 10:00 - 02:00 น.</div>
+    </div>
+    <div class="cta">
+      <a href="#packs" class="btn btn-main">🛒 ดูแพ็คราคา</a>
+      <a href="#contact" class="btn btn-ghost">💬 ติดต่อแอดมิน</a>
+    </div>
+  </div>
+</header>
+
+<section id="packs">
+  <div class="sec-head">
+    <div class="kicker">Special Pack</div>
+    <h2>💰 แพ็คพิเศษ เติม Robux</h2>
+    <p>เลือกแพ็คที่ต้องการ แล้วแชท ID - PASS หาแอดมินได้เลย เติมไวไม่เกิน 5 นาที 🐾</p>
+  </div>
+  <div class="grid" id="packGrid"></div>
+</section>
+
+<section id="howto">
+  <div class="sec-head">
+    <div class="kicker">How to top up</div>
+    <h2>📖 วิธีสั่งเติม (ใช้ ID - PASS)</h2>
+    <p>ง่ายๆ แค่ 4 ขั้นตอน ก็ได้ Robux เข้าบัญชี</p>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="num">1</div><h3>เลือกแพ็ค</h3><p>เลือกแพ็ค Robux ที่ต้องการจากตารางด้านบน</p></div>
+    <div class="step"><div class="num">2</div><h3>แชทหาแอดมิน</h3><p>ส่ง "แพ็คที่ต้องการ + ID - PASS" ผ่าน LINE / Facebook / Discord / Instagram</p></div>
+    <div class="step"><div class="num">3</div><h3>ชำระเงิน</h3><p>โอนจ่ายตามอัตราที่แอดมินแจ้ง พร้อมส่งสลิป</p></div>
+    <div class="step"><div class="num">4</div><h3>รับ Robux</h3><p>รอเข้าบัญชี ไวมาก ไม่เกิน 5 นาที ⚡</p></div>
+  </div>
+</section>
+
+<section id="admin">
+  <div class="sec-head">
+    <div class="kicker">Admin</div>
+    <h2>👤 แอดมินร้าน</h2>
+    <p>แอดมินใจดี ตอบไว แชทมาได้เลยนะ 🐾</p>
+  </div>
+  <div class="admin-card">
+    <div class="admin-photo"><img src="__ADMIN__" alt="แอดมินร้าน NekojomXNexPlay"></div>
+    <div class="admin-info">
+      <h3>แอดมิน Nekojom ✕ NexPlay</h3>
+      <div class="role">เจ้าของร้านเติม Robux • ดูแลออเดอร์ทุกชิ้นด้วยตัวเอง</div>
+      <div class="chips">
+        <span id="openBadge" class="chip chip-open">🟢 ...</span>
+        <span class="chip">🕐 เวลาทำการ 10:00 - 02:00 น.</span>
+      </div>
+      <p class="admin-note" id="openNote">กำลังเช็คสถานะร้าน...</p>
+      <div class="admin-cta">
+        <a href="https://line.me/ti/p/~056yonzb" target="_blank" rel="noopener" class="btn btn-main">💬 แชทกับแอดมิน</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="sec-head">
+    <div class="kicker">Contact</div>
+    <h2>💌 ช่องทางติดต่อ / สั่งเติม</h2>
+    <p>ส่ง ID - PASS พร้อมแพ็คที่ต้องการ มาหาเราได้ทุกช่องทางเลยนะ</p>
+  </div>
+  <div class="contacts">
+    <a class="contact" href="https://line.me/ti/p/~056yonzb" target="_blank" rel="noopener">
+      <div class="ic ic-line">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.5 2 2 5.7 2 10.2c0 4 3.5 7.3 8.2 8.1.3.1.7.3.8.6l.2.9c0 .2.3.3.5.2l2.4-1.3c.3-.2.7-.2 1.1-.2 4.3-.7 7.8-3.9 7.8-8.3C23 5.7 17.5 2 12 2zm-4.6 8.5H6.3c-.3 0-.6-.3-.6-.6s.3-.6.6-.6h1.1c.3 0 .6.3.6.6s-.3.6-.6.6zm6.1 0h-1.1c-.3 0-.6-.3-.6-.6s.3-.6.6-.6h1.1c.3 0 .6.3.6.6s-.3.6-.6.6zm4.5 0h-1.1c-.3 0-.6-.3-.6-.6s.3-.6.6-.6h1.1c.3 0 .6.3.6.6s-.3.6-.6.6z" opacity=".0"/><path d="M19.4 9.8c0-3.5-3.3-6.3-7.4-6.3S4.6 6.3 4.6 9.8c0 3.1 2.6 5.7 6.2 6.2.2 0 .5.1.6.4.1.2 0 .6 0 .8l-.1.7c0 .2-.1.6.5.4.6-.2 3.4-1.8 4.7-3.2 1-.9 1.7-2.1 1.7-3.3zm-10 1.9H7.8c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h1.6c.3 0 .5.2.5.5s-.2.5-.5.5zm0-2.3H7.8c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h1.6c.3 0 .5.2.5.5s-.2.5-.5.5zm5.5 2.3h-1.6c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h1.6c.3 0 .5.2.5.5s-.2.5-.5.5zm0-2.3h-1.6c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h1.6c.3 0 .5.2.5.5s-.2.5-.5.5z"/></svg>
+      </div>
+      <div><b>LINE</b><span>@056yonzb — ตอบไวสุด ⚡</span></div>
+    </a>
+    <a class="contact" href="https://www.facebook.com/NEXPLAY.GAMESTORE" target="_blank" rel="noopener">
+      <div class="ic ic-fb">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M13.5 21v-7h2.4l.4-3h-2.8V9.1c0-.9.3-1.5 1.6-1.5h1.3V4.9c-.6-.1-1.4-.2-2.3-.2-2.3 0-3.8 1.4-3.8 3.9V11H7.8v3h2.5v7h3.2z"/></svg>
+      </div>
+      <div><b>Facebook</b><span>NEXPLAY.GAMESTORE</span></div>
+    </a>
+    <a class="contact" href="https://discord.gg/nexplaygamestore99" target="_blank" rel="noopener">
+      <div class="ic ic-dc">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M19.3 5.6A16.4 16.4 0 0 0 15.2 4.3l-.2.4c1.4.4 2.1.8 2.8 1.3-1.5-.7-3-1.1-4.9-1.1s-3.4.4-4.9 1.1c.7-.5 1.5-1 2.8-1.3l-.2-.4c-1.5.2-2.9.7-4.1 1.3-2.4 4-3 8.5-2.7 13.1 1.7 1.2 3.3 2 4.9 2.5l.9-1.5c-.8-.3-1.6-.7-2.3-1.2l.2-.2c1.5.7 3.1 1.1 5 1.1s3.5-.4 5-1.1l.2.2c-.7.5-1.4.9-2.3 1.2l.9 1.5c1.6-.5 3.2-1.3 4.9-2.5.3-4.7-.5-9.1-2.9-13.1zM9.5 15c-.9 0-1.6-.8-1.6-1.8s.7-1.8 1.6-1.8 1.6.8 1.6 1.8-.7 1.8-1.6 1.8zm5 0c-.9 0-1.6-.8-1.6-1.8s.7-1.8 1.6-1.8 1.6.8 1.6 1.8-.7 1.8-1.6 1.8z"/></svg>
+      </div>
+      <div><b>Discord</b><span>nexplaygamestore99</span></div>
+    </a>
+    <a class="contact" href="https://www.instagram.com/nexplay_gamestore" target="_blank" rel="noopener">
+      <div class="ic ic-ig">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.2" fill="#fff" stroke="none"/></svg>
+      </div>
+      <div><b>Instagram</b><span>nexplay_gamestore</span></div>
+    </a>
+  </div>
+</section>
+
+<section id="maps">
+  <div class="sec-head">
+    <div class="kicker">Maps</div>
+    <h2>🗺️ แผนที่ / เกมของร้าน</h2>
+    <p>เข้าไปเล่นแมพของร้านเราได้เลย กดตามลิงก์เลย 🎮</p>
+  </div>
+  <div class="maps">
+    <a class="map" href="https://www.roblox.com/games/139188876356893/TEDDY-DIWAAA" target="_blank" rel="noopener">
+      <div class="art"><img src="__MAP3__" alt="TEDDY DIWAAA"><div class="label">🧸 TEDDY DIWAAA</div></div>
+      <div class="body"><span>Roblox Experience</span><span class="go">เล่นเลย →</span></div>
+    </a>
+    <a class="map" href="https://www.roblox.com/games/116667271006078/v-2" target="_blank" rel="noopener">
+      <div class="art"><img src="__MAP1__" alt="Doctor Lam Phalan v.2"><div class="label">🩺 Doctor Lam Phalan v.2</div></div>
+      <div class="body"><span>Roblox Experience</span><span class="go">เล่นเลย →</span></div>
+    </a>
+    <a class="map" href="https://www.roblox.com/games/127667519693885/MANY" target="_blank" rel="noopener">
+      <div class="art"><img src="__MAP2__" alt="MANY มันนี่"><div class="label">💎 MANY มันนี่</div></div>
+      <div class="body"><span>Roblox Experience</span><span class="go">เล่นเลย →</span></div>
+    </a>
+  </div>
+</section>
+
+<section id="notice">
+  <div class="notice">
+    <h3>⚠️ ข้อควรรู้ก่อนเติม (ID - PASS)</h3>
+    <ul>
+      <li>ก่อนเติม <b>อย่าเปลี่ยนรหัสผ่าน</b> ระหว่างที่แอดมินกำลังเติมอยู่</li>
+      <li>แนะนำให้ <b>ปิด 2-Step Verification</b> ชั่วคราวก่อนส่ง ID - PASS แล้วเปิดกลับหลังเติมเสร็จ</li>
+      <li>หลังเติมเสร็จ <b>เปลี่ยนรหัสผ่านใหม่ทันที</b> เพื่อความปลอดภัยของบัญชีคุณเอง</li>
+      <li>เติมเสร็จแอดมินจะแจ้งกลับพร้อมสกรีนยืนยันทุกครั้ง 🐾</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  🐱 <b>Nekojom ✕ NexPlay</b> Game Store — เติม Robux ไว ปลอดภัย ราคาถูกใจ<br>
+  © 2026 NekojomXNexplay. All rights reserved. ไม่มีความเกี่ยวข้องกับ Roblox Corporation.
+</footer>
+
+<div id="ytHost"></div>
+<div id="player">
+  <div id="pPanel"></div>
+  <div id="pMain">
+    <img id="pCover" src="__COVER1__" alt="ปกเพลง">
+    <div class="pInfo">
+      <div id="pTitle">—</div>
+      <div class="pTime">
+        <span id="pCur">0:00</span>
+        <div id="pBar"><div id="pFill"></div></div>
+        <span id="pDur">0:00</span>
+      </div>
+    </div>
+    <div class="pCtrl">
+      <button id="pPrev" title="เพลงก่อนหน้า">⏮</button>
+      <button id="pPlay" title="เล่น / หยุด">▶</button>
+      <button id="pNext" title="เพลงถัดไป">⏭</button>
+      <button id="pList" title="เพลย์ลิสต์">🎵</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= PACKS ================= */
+const PACKS = [
+  {rbx:80,   price:30,   img:'__PACK1__', hot:false, best:false},
+  {rbx:240,  price:88,   img:'__PACK2__', hot:true,  best:false},
+  {rbx:500,  price:150,  img:'__PACK3__', hot:false, best:false},
+  {rbx:1000, price:300,  img:'__PACK4__', hot:false, best:false},
+  {rbx:1500, price:450,  img:'__PACK5__', hot:false, best:false},
+  {rbx:2000, price:600,  img:'__PACK1__', hot:false, best:false},
+  {rbx:4000, price:1200, img:'__PACK2__', hot:false, best:false},
+  {rbx:6000, price:1800, img:'__PACK3__', hot:false, best:false},
+  {rbx:8000, price:2400, img:'__PACK4__', hot:true,  best:false},
+  {rbx:10000,price:2900, img:'__PACK5__', hot:false, best:true},
+];
+const rbxSVG = '<svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 1.5 21 6v12l-9 4.5L3 18V6l9-4.5z" fill="#fff" opacity=".18"/><path d="M12 1.5 21 6v12l-9 4.5L3 18V6l9-4.5z" fill="none" stroke="#ffd166" stroke-width="1.4"/><text x="12" y="15.8" font-size="10" font-weight="900" text-anchor="middle" fill="#ffd166" font-family="Arial">R</text></svg>';
+const grid = document.getElementById('packGrid');
+PACKS.forEach((p,i)=>{
+  const per = (p.price/p.rbx);
+  const d = document.createElement('a');
+  d.href = '#contact';
+  d.className = 'pack';
+  d.style.animationDelay = (i*0.06)+'s';
+  d.innerHTML = `
+    <div class="art">
+      <img src="${p.img}" alt="${p.rbx} Robux">
+      ${p.hot?'<div class="hot">🔥 ฮิตสุด</div>':''}
+      ${p.best?'<div class="best">👑 คุ้มสุด</div>':''}
+    </div>
+    <div class="body">
+      <div class="rbx">${rbxSVG} ${p.rbx.toLocaleString()} <span style="font-size:.9rem;font-weight:700">Robux</span></div>
+      <div class="price">฿${p.price.toLocaleString()}</div>
+      <div class="per">~${per.toFixed(2)} บาท/Robux</div>
+      <span class="order">💬 สั่งเติม</span>
+    </div>`;
+  grid.appendChild(d);
+});
+
+/* ================= MUSIC PLAYER (เพลย์ลิสต์ + รูปปก + เวลาเล่น) ================= */
+/* ─── วิธีใส่เพลงเอง ─────────────────────────────────────────────
+   เพิ่มบรรทัดใน TRACKS (ระหว่าง [ กับ ] คั่นด้วยลูกน้ำ ,):
+
+   1) เพลงจาก YouTube — ง่ายสุด แค่ลิงก์:
+      {title:'ชื่อเพลง', sub:'ศิลปิน', yt:'https://www.youtube.com/watch?v=XXXXXXXXXXX'},
+      ▸ ไม่ต้องใส่ cover — ระบบดึงรูปปกจาก YouTube ให้อัตโนมัติ (ใส่เองก็ได้)
+
+   2) ไฟล์เพลง MP3:
+      {title:'ชื่อเพลง', sub:'ศิลปิน', cover:'images/ปกเพลง.jpg', src:'images/เพลงของฉัน.mp3'},
+
+   3) เพลงสังเคราะห์ในตัว (ไม่มี yt และ src): ใส่แค่ title/sub/cover
+   ───────────────────────────────────────────────────────────── */
+const TRACKS = [
+  {title:'Amor Na Praia (SLOWED + REVERB)', sub:'Felax', yt:'https://youtu.be/UhJiV8CQ-kA'},
+  {title:'LUZ ROJA (Slowed)',              sub:'bxkq', yt:'https://youtu.be/UIuBtl4rz0E'},
+  {title:'MENTE MA (Slowed)',              sub:'SUKA.', yt:'https://youtu.be/daNqcK-COww'},
+  {title:'MONTAGEM PEGADORA (Slowed)',     sub:'SUKA.', yt:'https://youtu.be/6mWJ4FfNAYI'},
+  {title:'MONTAGEM XONADA',                sub:'MAFIA', yt:'https://youtu.be/sC2b43vxJbQ'},
+  {title:'NEXT! (Brazilian Phonk)',        sub:'ncts',  yt:'https://youtu.be/3U9AK5Sfyqw'},
+  {title:'NO BATIDÃO (Extended)',          sub:'SUKA.', yt:'https://youtu.be/YXxdETZ9npU'},
+];
+
+/* แปลงลิงก์ YouTube เป็นรหัสวิดีโอ (รองรับ watch / youtu.be / shorts / embed / รหัสเปล่า) */
+function parseYT(u){
+  if(!u) return '';
+  u = String(u).trim();
+  const m = u.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([A-Za-z0-9_-]{11})/);
+  if(m) return m[1];
+  if(/^[A-Za-z0-9_-]{11}$/.test(u)) return u;
+  return '';
+}
+/* ใส่รูปปกจาก YouTube อัตโนมัติ ถ้าเพลงไม่มี cover */
+TRACKS.forEach(function(t){
+  if(t.yt && (!t.cover || t.cover==='auto'))
+    t.cover = 'https://i.ytimg.com/vi/' + parseYT(t.yt) + '/hqdefault.jpg';
+});
+
+const Player = (()=>{
+  const N = {C5:523.25,D5:587.33,E5:659.25,F5:698.46,G5:783.99,A5:880,B5:987.77,
+             C6:1046.5,D6:1174.66,E6:1318.51,G6:1567.98,E7:2637,C7:2093,
+             C3:130.81,D3:146.83,F2:87.31,G2:98,A2:110};
+  let ctx=null, master=null, timer=null;
+  let idx=0, step=0, nextT=0, startCT=0;
+  let playing=false, started=false, wantPlay=false;
+  let audio=null;
+
+  const cur = ()=>TRACKS[idx];
+  const isFile = t=>!!t.src;
+  const isYT = t=>!!t.yt;
+  const fmt = s=>{ s=Math.max(0,Math.floor(s||0)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
+
+  /* ---------- เอนจิน 1: YouTube (yt:'ลิงก์เพลง') ---------- */
+  let ytPlayer=null, ytReadyQ=[], ytApiAsked=false, switching=false;
+  function ensureYT(cb){
+    if(ytPlayer && ytPlayer.loadVideoById){ cb(); return; }
+    ytReadyQ.push(cb);
+    if(ytApiAsked) return;
+    ytApiAsked=true;
+    window.onYouTubeIframeAPIReady=function(){
+      ytPlayer=new YT.Player('ytHost',{
+        videoId:'',
+        playerVars:{playsinline:1},
+        events:{
+          onReady:function(){
+            ytReadyQ.forEach(function(f){ try{f();}catch(e){} });
+            ytReadyQ=[];
+          },
+          onStateChange:function(e){
+            const YTS=YT.PlayerState;
+            if(e.data===YTS.ENDED){ if(!switching) nextTrack(); }
+            else if(e.data===YTS.PLAYING){
+              switching=false; playing=true;
+              const t=cur();
+              if(isYT(t) && ytPlayer.getDuration){
+                t.total=ytPlayer.getDuration();
+                if(panel && !t._durSet){
+                  t._durSet=true;
+                  const rows=panel.querySelectorAll('.pRow');
+                  for(let i=0;i<rows.length;i++)
+                    if(+rows[i].dataset.i===idx) rows[i].querySelector('.d').textContent=fmt(t.total);
+                }
+                $('pDur').textContent=fmt(t.total);
+              }
+              updUI();
+            }
+            else if(e.data===YTS.PAUSED && !switching){ playing=false; updUI(); }
+          },
+          onError:function(){ nextTrack(); }
+        }
+      });
+    };
+    const s=document.createElement('script');
+    s.src='https://www.youtube.com/iframe_api';
+    document.head.appendChild(s);
+  }
+  function ytPause(){ if(ytPlayer && ytPlayer.pauseVideo){ try{ytPlayer.pauseVideo();}catch(e){} } }
+  function ytPlayCurrent(){
+    const t=cur();
+    ensureYT(function(){
+      switching=true;
+      setTimeout(function(){switching=false;},1500);
+      try{ ytPlayer.loadVideoById(parseYT(t.yt)); }catch(e){}
+    });
+  }
+
+  /* ---------- เอนจิน 2: ไฟล์เพลงจริง (MP3 ผ่าน src) ---------- */
+  function ensureAudio(){
+    if(audio) return;
+    audio = new Audio();
+    audio.preload = 'auto';
+    audio.addEventListener('ended', function(){ nextTrack(); });
+    audio.addEventListener('play',  function(){ playing=true; updUI(); });
+    audio.addEventListener('pause', function(){ playing=false; updUI(); });
+    audio.addEventListener('loadedmetadata', function(){
+      const t = cur();
+      if(isFile(t) && audio.duration && isFinite(audio.duration)){
+        t.total = audio.duration;
+        if(panel && !t._durSet){
+          t._durSet=true;
+          const rows = panel.querySelectorAll('.pRow');
+          for(let i=0;i<rows.length;i++)
+            if(+rows[i].dataset.i===idx) rows[i].querySelector('.d').textContent = fmt(t.total);
+        }
+        updUI();
+      }
+    });
+  }
+  function stopAll(){
+    playing=false;
+    if(timer){ clearInterval(timer); timer=null; }
+    if(ctx) ctx.suspend();
+    if(audio) audio.pause();
+    ytPause();
+  }
+  /* ---------- เอนจิน 3: เพลงสังเคราะห์จากโค้ด ---------- */
+  function ensureCtx(){
+    if(ctx) return;
+    ctx = new (window.AudioContext||window.webkitAudioContext)();
+    master = ctx.createGain(); master.gain.value=.9;
+    const comp=ctx.createDynamicsCompressor();
+    master.connect(comp).connect(ctx.destination);
+  }
+  function tone(f,t,dur,type,vol,pan){
+    pan = pan||0;
+    const o=ctx.createOscillator(), g=ctx.createGain(), p=ctx.createStereoPanner();
+    o.type=type; o.frequency.value=f; p.pan.value=pan;
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(vol,t+0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g).connect(p).connect(master);
+    o.start(t); o.stop(t+dur+0.05);
+  }
+  function renderStep(t,s,tt){
+    const L=t.leadA[s], B=t.bassA[s], S=t.sparkA[s];
+    if(L && N[L]){
+      tone(N[L], tt, t.stepDur*1.8, t.wave, t.vol, -0.15);
+      tone(N[L]*2, tt, t.stepDur*1.2, 'sine', t.vol*.32, 0.2);
+    }
+    if(B && N[B]) tone(N[B], tt, t.stepDur*3.4, 'sine', .12, 0);
+    if(S && N[S]) tone(N[S], tt, t.stepDur*0.9, 'sine', .035, 0.35);
+    if(t.drums){
+      if(s%8===0){
+        const o=ctx.createOscillator(), g=ctx.createGain();
+        o.type='sine'; o.frequency.setValueAtTime(150,tt);
+        o.frequency.exponentialRampToValueAtTime(50,tt+0.12);
+        g.gain.setValueAtTime(.13,tt); g.gain.exponentialRampToValueAtTime(.0001,tt+0.14);
+        o.connect(g).connect(master); o.start(tt); o.stop(tt+0.16);
+      }
+      if(s%4===2){
+        const buf=ctx.createBuffer(1,1400,ctx.sampleRate), d=buf.getChannelData(0);
+        for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2);
+        const src=ctx.createBufferSource(); src.buffer=buf;
+        const g=ctx.createGain(); g.gain.value=.03;
+        const f=ctx.createBiquadFilter(); f.type='highpass'; f.frequency.value=7000;
+        src.connect(f).connect(g).connect(master); src.start(tt);
+      }
+    }
+  }
+  function schedule(){
+    if(!playing) return;
+    while(nextT < ctx.currentTime + 0.15){
+      const t = cur();
+      if(isFile(t)||isYT(t)) return;
+      if(step >= t.leadA.length * t.loops){ nextTrack(); return; }
+      renderStep(t, step % t.leadA.length, nextT);
+      nextT += t.stepDur; step++;
+    }
+  }
+  function startSynth(){
+    ensureCtx();
+    started=true; wantPlay=true;
+    ctx.resume().then(function(){
+      playing=true;
+      startCT = ctx.currentTime + 0.06;
+      nextT = startCT; step = 0;
+      if(!timer) timer = setInterval(schedule, 40);
+      updUI();
+    }).catch(function(){});
+    updUI();
+  }
+  /* ---------- ควบคุมหลัก ---------- */
+  function playTrack(i){
+    idx = ((i % TRACKS.length) + TRACKS.length) % TRACKS.length;
+    stopAll();
+    const t = cur();
+    if(isYT(t)){
+      started=true; wantPlay=true;
+      ytPlayCurrent();
+      updUI();
+    }else if(isFile(t)){
+      ensureAudio();
+      audio.src = t.src;
+      started=true; wantPlay=true;
+      audio.play().catch(function(){});
+      updUI();
+    }else{
+      startSynth();
+    }
+  }
+  function nextTrack(){ playTrack(idx+1); }
+  function prevTrack(){ playTrack(idx-1); }
+  function resumeEngine(){
+    const t = cur();
+    if(isYT(t)){
+      wantPlay=true;
+      if(ytPlayer && ytPlayer.getPlayerState && ytPlayer.getPlayerState()===2){
+        try{ ytPlayer.playVideo(); }catch(e){}
+      }else{
+        ytPlayCurrent();
+      }
+    }else if(isFile(t)){
+      ensureAudio();
+      if(!audio.src) audio.src = t.src;
+      audio.play().catch(function(){});
+    }else if(ctx && started){
+      ctx.resume().then(function(){
+        playing=true;
+        nextT = Math.max(nextT, ctx.currentTime + 0.05);
+        if(!timer) timer=setInterval(schedule,40);
+        updUI();
+      }).catch(function(){});
+    }
+  }
+  function toggle(){
+    if(!started){ playTrack(idx); return; }
+    if(playing){
+      wantPlay=false; stopAll(); updUI();
+    }else{
+      wantPlay=true; playing=true; updUI();
+      resumeEngine();
+    }
+  }
+  function seek(f){
+    const t = cur();
+    f = Math.max(0, Math.min(1, f));
+    if(isYT(t)){
+      if(ytPlayer && ytPlayer.getDuration){
+        const d=ytPlayer.getDuration();
+        if(d>0){ switching=true; try{ ytPlayer.seekTo(f*d,true); }catch(e){} setTimeout(function(){switching=false;},600); }
+      }
+    }else if(isFile(t)){
+      if(audio && isFinite(audio.duration) && audio.duration>0)
+        audio.currentTime = f * audio.duration;
+    }else{
+      step = Math.floor(f * t.leadA.length * t.loops);
+      if(ctx){
+        nextT = Math.max(nextT, ctx.currentTime + 0.03);
+        startCT = ctx.currentTime - step * t.stepDur;
+      }
+    }
+  }
+  function totalTime(){
+    const t = cur();
+    if(isYT(t)) return (ytPlayer && ytPlayer.getDuration && ytPlayer.getDuration()>0) ? ytPlayer.getDuration() : (t.total||0);
+    if(isFile(t)) return (audio && isFinite(audio.duration) && audio.duration>0) ? audio.duration : (t.total||0);
+    return t.total;
+  }
+  const elapsed = function(){
+    const t=cur();
+    if(isYT(t)) return (ytPlayer && ytPlayer.getCurrentTime) ? (ytPlayer.getCurrentTime()||0) : 0;
+    if(isFile(t)) return audio ? (audio.currentTime||0) : 0;
+    return ctx ? Math.max(0, ctx.currentTime - startCT) : 0;
+  };
+
+  /* ---------- UI ---------- */
+  const $ = function(id){ return document.getElementById(id); };
+  let panel;
+  function buildPanel(){
+    panel.innerHTML = '<h4>🎵 เพลย์ลิสต์ทั้งหมด (' + TRACKS.length + ')</h4>';
+    TRACKS.forEach(function(t,i){
+      const r=document.createElement('div');
+      r.className='pRow'; r.dataset.i=i;
+      const dur = isFile(t) ? 'MP3' : (isYT(t) ? 'YT' : fmt(t.total));
+      r.innerHTML = '<img src="'+t.cover+'" alt=""><div class="t"><b>'+t.title+'</b><span>'+t.sub+'</span></div><div class="d">'+dur+'</div>';
+      r.addEventListener('click',function(){ playTrack(i); });
+      panel.appendChild(r);
+    });
+  }
+  function updUI(){
+    if(!panel) return;
+    const t = cur();
+    $('pTitle').textContent = t.title;
+    $('pCover').src = t.cover;
+    $('pDur').textContent = fmt(totalTime());
+    $('pPlay').textContent = playing ? '⏸' : '▶';
+    $('player').classList.toggle('playing', playing);
+    const rows = panel.querySelectorAll('.pRow');
+    for(let i=0;i<rows.length;i++) rows[i].classList.toggle('cur', +rows[i].dataset.i===idx);
+  }
+  function tick(){
+    requestAnimationFrame(tick);
+    if(!panel) return;
+    const e = elapsed(), tt = totalTime();
+    $('pCur').textContent = fmt(e);
+    $('pFill').style.width = (tt>0 ? Math.min(100, e/tt*100) : 0) + '%';
+  }
+  function init(){
+    panel = $('pPanel');
+    buildPanel(); updUI(); tick();
+    $('pPlay').addEventListener('click', toggle);
+    $('pNext').addEventListener('click', nextTrack);
+    $('pPrev').addEventListener('click', prevTrack);
+    $('pList').addEventListener('click', function(e){ e.stopPropagation(); panel.classList.toggle('open'); });
+    $('pBar').addEventListener('click', function(e){
+      const r = e.currentTarget.getBoundingClientRect();
+      seek((e.clientX - r.left) / r.width);
+    });
+  }
+  return {init:init, playTrack:playTrack, toggle:toggle, nextTrack:nextTrack, prevTrack:prevTrack,
+          seek:seek, elapsed:elapsed, resume:resumeEngine,
+          get playing(){return playing}, get started(){return started}, get wantPlay(){return wantPlay}};
+})();
+document.addEventListener('DOMContentLoaded', function(){ Player.init(); });
+window.addEventListener('load', function(){ if(!Player.started) Player.playTrack(0); });
+const kick=function(){
+  if(!Player.started){ Player.playTrack(0); return; }
+  if(Player.wantPlay && !Player.playing) Player.resume();
+};
+['pointerdown','keydown','touchstart','wheel'].forEach(function(ev){
+  window.addEventListener(ev,kick,{once:false,passive:true});
+});
+
+/* ================= สถานะร้านเปิด/ปิด (10:00 - 02:00) ================= */
+(function(){
+  function upd(){
+    const now = new Date(), h = now.getHours();
+    const open = (h >= 10 || h < 2);
+    const badge = document.getElementById('openBadge');
+    const note  = document.getElementById('openNote');
+    const timeStr = now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+    if(open){
+      badge.className='chip chip-open';
+      badge.textContent='🟢 ร้านเปิดอยู่';
+      note.innerHTML = 'ตอนนี้เวลา <b style="color:var(--gold)">'+timeStr+' น.</b> — แอดมินออนไลน์ แชทมาได้เลย เติมไวไม่เกิน 5 นาที ⚡';
+    }else{
+      badge.className='chip chip-closed';
+      badge.textContent='🔴 ร้านปิดอยู่';
+      note.innerHTML = 'ตอนนี้เวลา <b style="color:var(--gold)">'+timeStr+' น.</b> — แอดมินหลับแล้ว 😴 ฝากข้อความไว้ได้เลย เช้ามาเปิด 10:00 น. ตอบทันที!';
+    }
+  }
+  upd();
+  setInterval(upd, 15000);
+})();
+
+/* ================= BOUNCE ON PRESS (ทุกการ์ดกดแล้วเด้ง) ================= */
+document.addEventListener('pointerdown',e=>{
+  const t=e.target.closest('a.pack,.map,.contact,.btn,nav a');
+  if(!t) return;
+  t.classList.remove('pop'); void t.offsetWidth; t.classList.add('pop');
+  t.addEventListener('animationend',()=>t.classList.remove('pop'),{once:true});
+});
+
+/* ================= FLOATING CUTE PARTICLES ================= */
+(()=>{
+  const c=document.getElementById('fx'), x=c.getContext('2d');
+  let W,H,parts=[];
+  const EMO=['✨','💕','⭐','🌟','🐾','💜'];
+  function rs(){ W=c.width=innerWidth; H=c.height=innerHeight; }
+  rs(); addEventListener('resize',rs);
+  for(let i=0;i<26;i++) parts.push({
+    x:Math.random()*innerWidth, y:Math.random()*innerHeight,
+    s:10+Math.random()*14, v:.3+Math.random()*.7,
+    sw:Math.random()*2*Math.PI, e:EMO[i%EMO.length], a:.35+Math.random()*.4
+  });
+  (function loop(t){
+    x.clearRect(0,0,W,H);
+    for(const p of parts){
+      p.y-=p.v; p.sw+=0.015;
+      if(p.y<-30){p.y=H+30;p.x=Math.random()*W;}
+      x.save();
+      x.globalAlpha=p.a*(0.7+0.3*Math.sin(p.sw*2));
+      x.font=p.s+'px serif';
+      x.fillText(p.e, p.x+Math.sin(p.sw)*14, p.y);
+      x.restore();
+    }
+    requestAnimationFrame(loop);
+  })();
+})();
+</script>
+</body>
+</html>
