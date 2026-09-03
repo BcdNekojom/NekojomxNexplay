@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nekojom ✕ NexPlay — เติม Robux ราคาถูก ไวใน 5 นาที</title>
+<link rel="icon" type="image/png" href="__FAVICON__">
+<link rel="apple-touch-icon" href="__FAVICON180__">
+<meta name="theme-color" content="#12071f">
 <style>
   :root{
     --bg:#12071f;
@@ -249,6 +252,24 @@
     100%{transform:scale(1)}
   }
 
+  /* ---------- codetoy marquee (รูปเลื่อนไปเรื่อยๆ) ---------- */
+  .mq-wrap{
+    overflow:hidden;position:relative;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+    mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+  }
+  .mq{display:flex;width:max-content;animation:mq 60s linear infinite;padding:6px 0}
+  .mq:hover{animation-play-state:paused}
+  @keyframes mq{to{transform:translateX(-50%)}}
+  a.mq-item{
+    flex:0 0 auto;width:205px;margin-right:16px;text-decoration:none;color:#fff;
+    background:var(--card);border:1px solid var(--stroke);border-radius:18px;overflow:hidden;
+    transition:transform .3s,border-color .3s,box-shadow .3s;display:block;
+  }
+  a.mq-item:hover{transform:translateY(-6px) scale(1.03);border-color:var(--pink);box-shadow:0 14px 38px rgba(255,95,210,.3)}
+  a.mq-item img{width:100%;height:250px;object-fit:cover;display:block}
+  .mq-item .cap{padding:10px 12px;font-size:.82rem;font-weight:700;text-align:center;color:#ffe9fb}
+
   /* ---------- steps ---------- */
   .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
   .step{
@@ -328,11 +349,12 @@
 <nav>
   <div class="logo"><span class="cat">🐱</span> Nekojom<b>X</b>NexPlay</div>
   <div class="navlinks">
+    <a href="#maps">แผนที่ / เกม</a>
     <a href="#packs">แพ็คราคา</a>
+    <a href="#codetoy">CODETOY</a>
     <a href="#howto">วิธีเติม</a>
     <a href="#admin">แอดมินร้าน</a>
     <a href="#contact">ช่องทางติดต่อ</a>
-    <a href="#maps">แผนที่ / เกม</a>
   </div>
 </nav>
 
@@ -355,6 +377,27 @@
   </div>
 </header>
 
+<section id="maps">
+  <div class="sec-head">
+    <div class="kicker">Maps</div>
+    <h2>🗺️ แผนที่ / เกมของร้าน</h2>
+    <p>เข้าไปเล่นแมพของร้านเราได้เลย กดตามลิงก์เลย 🎮</p>
+  </div>
+  <div class="maps">
+    <a class="map" href="https://www.roblox.com/games/139188876356893/TEDDY-DIWAAA" target="_blank" rel="noopener">
+      <div class="art"><img src="__MAP3__" alt="TEDDY DIWAAA"><div class="label">🧸 TEDDY DIWAAA</div></div>
+      <div class="body"><span>Roblox Experience</span><span class="go">เล่นเลย →</span></div>
+    </a>
+    <a class="map" href="https://www.roblox.com/games/116667271006078/v-2" target="_blank" rel="noopener">
+      <div class="art"><img src="__MAP1__" alt="Doctor Lam Phalan v.2"><div class="label">🩺 Doctor Lam Phalan v.2</div></div>
+      <div class="body"><span>Roblox Experience</span><span class="go">เล่นเลย →</span></div>
+    </a>
+    <a class="map" href="https://www.roblox.com/games/127667519693885/MANY" target="_blank" rel="noopener">
+      <div class="art"><img src="__MAP2__" alt="MANY มันนี่"><div class="label">💎 MANY มันนี่</div></div>
+      <div class="body"><span>Roblox Experience</span><span class="go">เล่นเลย →</span></div>
+    </a>
+  </div>
+</section>
 <section id="packs">
   <div class="sec-head">
     <div class="kicker">Special Pack</div>
@@ -362,6 +405,15 @@
     <p>เลือกแพ็คที่ต้องการ แล้วแชท ID - PASS หาแอดมินได้เลย เติมไวไม่เกิน 5 นาที 🐾</p>
   </div>
   <div class="grid" id="packGrid"></div>
+</section>
+
+<section id="codetoy">
+  <div class="sec-head">
+    <div class="kicker">Code Toy</div>
+    <h2>🎁 CODETOY — โค้ดของเล่น</h2>
+    <p>โค้ดของเล่น Roblox สุดฮิต เลื่อนดูไปเรื่อยๆ เอาเมาส์ชี้เพื่อหยุด แล้วกดสั่งได้เลย 🎮</p>
+  </div>
+  <div class="mq-wrap"><div class="mq" id="mq"></div></div>
 </section>
 
 <section id="howto">
@@ -435,27 +487,6 @@
   </div>
 </section>
 
-<section id="maps">
-  <div class="sec-head">
-    <div class="kicker">Maps</div>
-    <h2>🗺️ แผนที่ / เกมของร้าน</h2>
-    <p>เข้าไปเล่นแมพของร้านเราได้เลย กดตามลิงก์เลย 🎮</p>
-  </div>
-  <div class="maps">
-    <a class="map" href="https://www.roblox.com/games/139188876356893/TEDDY-DIWAAA" target="_blank" rel="noopener">
-      <div class="art"><img src="__MAP3__" alt="TEDDY DIWAAA"><div class="label">🧸 TEDDY DIWAAA</div></div>
-      <div class="body"><span>Roblox Experience</span><span class="go">เล่นเลย →</span></div>
-    </a>
-    <a class="map" href="https://www.roblox.com/games/116667271006078/v-2" target="_blank" rel="noopener">
-      <div class="art"><img src="__MAP1__" alt="Doctor Lam Phalan v.2"><div class="label">🩺 Doctor Lam Phalan v.2</div></div>
-      <div class="body"><span>Roblox Experience</span><span class="go">เล่นเลย →</span></div>
-    </a>
-    <a class="map" href="https://www.roblox.com/games/127667519693885/MANY" target="_blank" rel="noopener">
-      <div class="art"><img src="__MAP2__" alt="MANY มันนี่"><div class="label">💎 MANY มันนี่</div></div>
-      <div class="body"><span>Roblox Experience</span><span class="go">เล่นเลย →</span></div>
-    </a>
-  </div>
-</section>
 
 <section id="notice">
   <div class="notice">
@@ -531,6 +562,17 @@ PACKS.forEach((p,i)=>{
       <span class="order">💬 สั่งเติม</span>
     </div>`;
   grid.appendChild(d);
+});
+
+/* ================= CODETOY รูปเลื่อนไปเรื่อยๆ ================= */
+const PROMOS = ['__PROMO1__','__PROMO2__','__PROMO3__','__PROMO4__','__PROMO5__','__PROMO6__','__PROMO7__'];
+const mq = document.getElementById('mq');
+/* ใส่ 2 ชุดซ้ำ เพื่อให้เลื่อนวนได้ราบรื่นไม่สะดุด */
+PROMOS.concat(PROMOS).forEach(function(src){
+  const a=document.createElement('a');
+  a.href='#contact'; a.className='mq-item';
+  a.innerHTML='<img src="'+src+'" alt="โค้ดของเล่น Roblox"><div class="cap">🎁 โค้ดของเล่น • กดสั่งเลย</div>';
+  mq.appendChild(a);
 });
 
 /* ================= MUSIC PLAYER (เพลย์ลิสต์ + รูปปก + เวลาเล่น) ================= */
@@ -900,34 +942,37 @@ const kick=function(){
 
 /* ================= BOUNCE ON PRESS (ทุกการ์ดกดแล้วเด้ง) ================= */
 document.addEventListener('pointerdown',e=>{
-  const t=e.target.closest('a.pack,.map,.contact,.btn,nav a');
+  const t=e.target.closest('a.pack,.map,.contact,.btn,a.mq-item,nav a');
   if(!t) return;
   t.classList.remove('pop'); void t.offsetWidth; t.classList.add('pop');
   t.addEventListener('animationend',()=>t.classList.remove('pop'),{once:true});
 });
 
-/* ================= FLOATING CUTE PARTICLES ================= */
+/* ================= ROBUX ลอยๆ ทั่วจอ ================= */
 (()=>{
   const c=document.getElementById('fx'), x=c.getContext('2d');
   let W,H,parts=[];
-  const EMO=['✨','💕','⭐','🌟','🐾','💜'];
+  const coin=new Image(); coin.src='__ROBUX__';
   function rs(){ W=c.width=innerWidth; H=c.height=innerHeight; }
   rs(); addEventListener('resize',rs);
-  for(let i=0;i<26;i++) parts.push({
+  for(let i=0;i<24;i++) parts.push({
     x:Math.random()*innerWidth, y:Math.random()*innerHeight,
-    s:10+Math.random()*14, v:.3+Math.random()*.7,
-    sw:Math.random()*2*Math.PI, e:EMO[i%EMO.length], a:.35+Math.random()*.4
+    s:14+Math.random()*22, v:.3+Math.random()*.7,
+    sw:Math.random()*2*Math.PI, a:.3+Math.random()*.45
   });
   (function loop(t){
     x.clearRect(0,0,W,H);
-    for(const p of parts){
-      p.y-=p.v; p.sw+=0.015;
-      if(p.y<-30){p.y=H+30;p.x=Math.random()*W;}
-      x.save();
-      x.globalAlpha=p.a*(0.7+0.3*Math.sin(p.sw*2));
-      x.font=p.s+'px serif';
-      x.fillText(p.e, p.x+Math.sin(p.sw)*14, p.y);
-      x.restore();
+    if(coin.complete && coin.naturalWidth){
+      for(const p of parts){
+        p.y-=p.v; p.sw+=0.015;
+        if(p.y<-40){p.y=H+40;p.x=Math.random()*W;}
+        x.save();
+        x.globalAlpha=p.a*(0.7+0.3*Math.sin(p.sw*2));
+        x.translate(p.x+Math.sin(p.sw)*16, p.y);
+        x.rotate(Math.sin(p.sw)*0.25);
+        x.drawImage(coin,-p.s/2,-p.s/2,p.s,p.s);
+        x.restore();
+      }
     }
     requestAnimationFrame(loop);
   })();
